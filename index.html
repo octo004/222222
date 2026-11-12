@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>智慧AI家教輔導系統 - 數位科技概論</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Confetti -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;600;700;900&display=swap');
+    body {
+      font-family: 'Noto Sans TC', sans-serif;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+  <!-- 頂部導覽列 -->
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-md shadow-indigo-100">
+          <i data-lucide="graduation-cap" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <div class="flex items-center space-x-2">
+            <h1 class="font-bold text-lg text-slate-900 tracking-tight">智學 AI 家教系統</h1>
+            <span class="text-xs bg-indigo-50 text-indigo-700 font-semibold px-2 py-0.5 rounded-full border border-indigo-100">高職課輔專用版</span>
+          </div>
+          <p class="text-xs text-slate-500">數位科技概論（上）第3章：系統平台的組成架構－硬體</p>
+        </div>
+      </div>
+
+      <!-- 學生狀態與得分 -->
+      <div class="flex items-center space-x-4">
+        <div class="hidden md:flex items-center space-x-3 bg-slate-50 px-3 py-1.5 rounded-xl border border-slate-200 text-xs">
+          <div class="flex items-center space-x-1.5 text-slate-600">
+            <i data-lucide="user" class="w-4 h-4 text-indigo-600"></i>
+            <span class="font-medium">資電科一年仁班 陳冠宇 (15號)</span>
+          </div>
+          <span class="text-slate-300">|</span>
+          <span class="text-slate-500">隨堂測驗卷 第3回</span>
+        </div>
+
+        <div class="flex items-center space-x-2">
+          <div class="text-right">
+            <span class="text-[10px] text-rose-500 font-bold uppercase tracking-wider block">前次測驗得分</span>
+            <span class="text-2xl font-black text-rose-600 leading-none">52 <span class="text-xs font-normal text-slate-400">/ 100</span></span>
+          </div>
+          <div class="w-10 h-10 rounded-full bg-rose-50 border-2 border-rose-300 flex items-center justify-center text-rose-600 font-bold text-sm">
+            待補強
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- 主選單導航 Tab -->
+  <div class="bg-white border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex space-x-1 sm:space-x-4 overflow-x-auto">
+      <button onclick="switchTab('dashboard')" id="tab-dashboard" class="tab-btn active border-b-2 border-indigo-600 text-indigo-600 font-bold py-3.5 px-3 text-sm flex items-center space-x-2 whitespace-nowrap">
+        <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+        <span>診斷儀表板</span>
+      </button>
+      <button onclick="switchTab('mistakes')" id="tab-mistakes" class="tab-btn border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-medium py-3.5 px-3 text-sm flex items-center space-x-2 whitespace-nowrap">
+        <i data-lucide="alert-circle" class="w-4 h-4 text-rose-500"></i>
+        <span>錯題本剖析 <span class="bg-rose-100 text-rose-700 text-xs px-1.5 py-0.2 rounded-full font-bold ml-1">12</span></span>
+      </button>
+      <button onclick="switchTab('tutor')" id="tab-tutor" class="tab-btn border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-medium py-3.5 px-3 text-sm flex items-center space-x-2 whitespace-nowrap">
+        <i data-lucide="bot" class="w-4 h-4 text-violet-500"></i>
+        <span>AI 家教即時互動室</span>
+      </button>
+      <button onclick="switchTab('practice')" id="tab-practice" class="tab-btn border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-medium py-3.5 px-3 text-sm flex items-center space-x-2 whitespace-nowrap">
+        <i data-lucide="pen-tool" class="w-4 h-4 text-emerald-500"></i>
+        <span>弱點變形練習測驗</span>
+      </button>
+      <button onclick="switchTab('cheatsheet')" id="tab-cheatsheet" class="tab-btn border-b-2 border-transparent text-slate-500 hover:text-slate-700 font-medium py-3.5 px-3 text-sm flex items-center space-x-2 whitespace-nowrap">
+        <i data-lucide="book-open" class="w-4 h-4 text-amber-500"></i>
+        <span>名師考前速記卡</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 主內容區域 -->
+  <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+
+    <!-- TAB 1: 診斷儀表板 (Dashboard) -->
+    <div id="content-dashboard" class="tab-content space-y-6">
+      <!-- 頂部概況橫幅 -->
+      <div class="bg-gradient-to-r from-indigo-900 via-indigo-800 to-slate-900 rounded-3xl text-white p-6 sm:p-8 shadow-xl relative overflow-hidden">
+        <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
+          <div class="space-y-2">
+            <div class="inline-flex items-center space-x-2 bg-indigo-500/30 text-indigo-200 px-3 py-1 rounded-full text-xs font-semibold backdrop-blur-sm">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-300"></i>
+              <span>AI 學習履歷深度診斷報告</span>
+            </div>
+            <h2 class="text-2xl sm:text-3xl font-black tracking-tight text-white">陳同學，別灰心！掌握這 4 大盲點立即跨過及格線</h2>
+            <p class="text-indigo-200 text-sm max-w-2xl leading-relaxed">
+              本次考卷共 25 題，你答對 13 題（得 52 分）。系統診斷發現你在基本常識題（印表機解析度、掃描器數位化、鍵盤影響等）表現優異；失分主因集中在「<span class="text-amber-300 font-bold">記憶體儲存原理 (SRAM/DRAM/SSD)</span>」與「<span class="text-amber-300 font-bold">CPU核心組成與單位換算 (64位元/GHz)</span>」。跟著本系統循序漸進練習，預期下次段考可突破 85 分！
+            </p>
+          </div>
+          <div class="flex items-center gap-3">
+            <button onclick="switchTab('tutor')" class="px-5 py-3 rounded-2xl bg-indigo-500 hover:bg-indigo-400 text-white font-bold text-sm shadow-lg shadow-indigo-600/30 transition flex items-center space-x-2">
+              <i data-lucide="message-square-plus" class="w-4 h-4"></i>
+              <span>開始家教輔導</span>
+            </button>
+            <button onclick="switchTab('practice')" class="px-5 py-3 rounded-2xl bg-white/10 hover:bg-white/20 text-white font-bold text-sm backdrop-blur-sm transition flex items-center space-x-2 border border-white/20">
+              <i data-lucide="check-circle-2" class="w-4 h-4 text-emerald-400"></i>
+              <span>挑戰變形考題</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 四個核心統計數據卡 -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-4">
+          <div class="w-12 h-12 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center font-bold">
+            <i data-lucide="file-question" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <span class="text-xs text-slate-500 font-medium block">總題數 / 配分</span>
+            <span class="text-xl font-bold text-slate-800">25 題 <span class="text-xs text-slate-400">(4分/題)</span></span>
+          </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-4">
+          <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center font-bold">
+            <i data-lucide="check" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <span class="text-xs text-slate-500 font-medium block">答對題數 / 正確率</span>
+            <span class="text-xl font-bold text-emerald-600">13 題 <span class="text-xs text-slate-400">(52%)</span></span>
+          </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-4">
+          <div class="w-12 h-12 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center font-bold">
+            <i data-lucide="x" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <span class="text-xs text-slate-500 font-medium block">答錯題數 / 扣分</span>
+            <span class="text-xl font-bold text-rose-600">12 題 <span class="text-xs text-slate-400">(-48分)</span></span>
+          </div>
+        </div>
+
+        <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex items-center space-x-4">
+          <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center font-bold">
+            <i data-lucide="target" class="w-6 h-6"></i>
+          </div>
+          <div>
+            <span class="text-xs text-slate-500 font-medium block">核心突破目標</span>
+            <span class="text-xl font-bold text-amber-600">記憶體 & CPU</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 圖表分析區 -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- 雷達圖 / 掌握度 -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm lg:col-span-1 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between mb-2">
+              <h3 class="font-bold text-slate-800 text-base flex items-center space-x-2">
+                <i data-lucide="radar" class="w-4 h-4 text-indigo-600"></i>
+                <span>4大知識向度雷達診斷</span>
+              </h3>
+            </div>
+            <p class="text-xs text-slate-500 mb-4">掌握度低於 60% 者為迫切需補強單元</p>
+            <div class="relative w-full aspect-square max-w-[280px] mx-auto">
+              <canvas id="radarChart"></canvas>
+            </div>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-100 text-xs text-slate-500 space-y-1">
+            <div class="flex justify-between items-center"><span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-rose-500"></span>記憶體與儲存階層:</span> <span class="font-bold text-rose-600">43% (4錯/7題)</span></div>
+            <div class="flex justify-between items-center"><span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-amber-500"></span>硬體規格與單位換算:</span> <span class="font-bold text-amber-600">25% (3錯/4題)</span></div>
+            <div class="flex justify-between items-center"><span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-indigo-500"></span>CPU與五大單元架構:</span> <span class="font-bold text-indigo-600">67% (2錯/6題)</span></div>
+            <div class="flex justify-between items-center"><span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-emerald-500"></span>周邊介面與I/O埠:</span> <span class="font-bold text-emerald-600">63% (3錯/8題)</span></div>
+          </div>
+        </div>
+
+        <!-- 弱點深入診斷卡片 -->
+        <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm lg:col-span-2 space-y-4">
+          <div class="flex items-center justify-between">
+            <h3 class="font-bold text-slate-800 text-base flex items-center space-x-2">
+              <i data-lucide="stethoscope" class="w-4 h-4 text-rose-600"></i>
+              <span>AI 家教四大病灶診斷書</span>
+            </h3>
+            <span class="text-xs bg-rose-50 text-rose-600 font-bold px-2 py-1 rounded-lg">失分關鍵聚焦</span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- 病灶 1 -->
+            <div class="p-4 rounded-xl border border-rose-100 bg-rose-50/40 space-y-2">
+              <div class="flex items-center space-x-2 text-rose-700 font-bold text-sm">
+                <span class="w-6 h-6 rounded-full bg-rose-200 text-rose-800 text-xs flex items-center justify-center font-black">1</span>
+                <span>記憶體特性混淆 (SRAM vs DRAM)</span>
+              </div>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                錯了第 1 題與第 17 題。把「快取記憶體(SRAM)」跟「主記憶體(DRAM)」特點弄反了。SRAM速度極快、成本極高、不需充電更新(Refresh)；DRAM便宜容量大但要一直充電。
+              </p>
+              <div class="text-[11px] font-bold text-indigo-600 bg-white/80 p-2 rounded-lg border border-rose-100">
+                💡 家教提醒：只要看到 Cache(快取) 必選 SRAM！
+              </div>
+            </div>
+
+            <!-- 病灶 2 -->
+            <div class="p-4 rounded-xl border border-amber-100 bg-amber-50/40 space-y-2">
+              <div class="flex items-center space-x-2 text-amber-800 font-bold text-sm">
+                <span class="w-6 h-6 rounded-full bg-amber-200 text-amber-900 text-xs flex items-center justify-center font-black">2</span>
+                <span>固態硬碟(SSD)物理原理不熟</span>
+              </div>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                錯了第 16 題與第 21 題。SSD 裡面只有「快閃記憶體(Flash Memory)」晶片，完全沒有馬達與讀寫頭！而且千萬「不可進行磁碟重組」，重組會縮短壽命。
+              </p>
+              <div class="text-[11px] font-bold text-indigo-600 bg-white/80 p-2 rounded-lg border border-amber-100">
+                💡 家教提醒：SSD = 無馬達、防震、禁止磁碟重組！
+              </div>
+            </div>
+
+            <!-- 病灶 3 -->
+            <div class="p-4 rounded-xl border border-blue-100 bg-blue-50/40 space-y-2">
+              <div class="flex items-center space-x-2 text-blue-800 font-bold text-sm">
+                <span class="w-6 h-6 rounded-full bg-blue-200 text-blue-900 text-xs flex items-center justify-center font-black">3</span>
+                <span>電腦規格術語與單位進位</span>
+              </div>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                錯了第 10 題(MIPS)、12 題(64位元)、15 題(2.80GHz)。MIPS中的I是Instruction(指令)；64位元代表暫存器寬度；$1\text{GHz} = 10\text{億次/秒}$，所以2.8GHz是28億次！
+              </p>
+              <div class="text-[11px] font-bold text-indigo-600 bg-white/80 p-2 rounded-lg border border-blue-100">
+                💡 家教提醒：G是十億($10^9$)，不是一億！MIPS是每秒百萬指令。
+              </div>
+            </div>
+
+            <!-- 病灶 4 -->
+            <div class="p-4 rounded-xl border border-violet-100 bg-violet-50/40 space-y-2">
+              <div class="flex items-center space-x-2 text-violet-800 font-bold text-sm">
+                <span class="w-6 h-6 rounded-full bg-violet-200 text-violet-900 text-xs flex items-center justify-center font-black">4</span>
+                <span>硬體運作與連接埠基礎</span>
+              </div>
+              <p class="text-xs text-slate-600 leading-relaxed">
+                錯了第 5 題(CPU組成)、7 題(熱插拔)、24 題(Line out)。CPU只由 ALU + CU 組成；熱插拔是開機關機都能拔；Line out 專門接耳機喇叭輸出聲音，不能接網路！
+              </p>
+              <div class="text-[11px] font-bold text-indigo-600 bg-white/80 p-2 rounded-lg border border-violet-100">
+                💡 家教提醒：CPU心臟大腦只有算術(ALU)+控制(CU)！
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: 錯題本剖析 (Mistake Analysis) -->
+    <div id="content-mistakes" class="tab-content hidden space-y-6">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+        <div>
+          <h2 class="text-lg font-bold text-slate-900 flex items-center space-x-2">
+            <i data-lucide="book-open-check" class="w-5 h-5 text-indigo-600"></i>
+            <span>第3回測驗卷 12 道錯題逐題深層剖析</span>
+          </h2>
+          <p class="text-xs text-slate-500 mt-1">針對每道錯題提供「學生原案 vs 正解」、「盲點解剖」與「秒殺訣竅」</p>
+        </div>
+        <div class="flex items-center space-x-2 overflow-x-auto pb-1 sm:pb-0">
+          <button onclick="filterMistakes('all')" id="btn-filter-all" class="filter-btn active text-xs font-bold px-3 py-1.5 rounded-lg bg-indigo-600 text-white">全部錯題 (12)</button>
+          <button onclick="filterMistakes('memory')" id="btn-filter-memory" class="filter-btn text-xs font-medium px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200">記憶體儲存 (4)</button>
+          <button onclick="filterMistakes('cpu')" id="btn-filter-cpu" class="filter-btn text-xs font-medium px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200">CPU架構 (2)</button>
+          <button onclick="filterMistakes('specs')" id="btn-filter-specs" class="filter-btn text-xs font-medium px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200">規格換算 (3)</button>
+          <button onclick="filterMistakes('io')" id="btn-filter-io" class="filter-btn text-xs font-medium px-3 py-1.5 rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200">介面與周邊 (3)</button>
+        </div>
+      </div>
+
+      <!-- 錯題卡片容器 (動態渲染) -->
+      <div id="mistakes-container" class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <!-- JS 將自動填入 12 道錯題 -->
+      </div>
+    </div>
+
+    <!-- TAB 3: AI 家教即時互動室 (Interactive Tutor) -->
+    <div id="content-tutor" class="tab-content hidden space-y-6">
+      <div class="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col h-[750px]">
+        <!-- 聊天室 Header -->
+        <div class="p-4 sm:p-5 bg-gradient-to-r from-slate-900 to-indigo-950 text-white flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <div class="relative">
+              <div class="w-11 h-11 rounded-2xl bg-indigo-600 flex items-center justify-center font-bold text-white shadow-md">
+                <i data-lucide="bot" class="w-6 h-6"></i>
+              </div>
+              <span class="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-500 border-2 border-slate-900 rounded-full"></span>
+            </div>
+            <div>
+              <div class="flex items-center space-x-2">
+                <h3 class="font-bold text-sm sm:text-base">AI 專屬資電科家教老師</h3>
+                <span class="text-[10px] bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 rounded-full font-medium">線上在線</span>
+              </div>
+              <p class="text-xs text-indigo-200">隨時為陳冠宇同學引導解答硬體架構盲點，鼓勵思考不直接給死背答案</p>
+            </div>
+          </div>
+
+          <div class="flex items-center space-x-2">
+            <button onclick="clearChat()" class="text-xs text-indigo-200 hover:text-white px-2.5 py-1.5 rounded-lg hover:bg-white/10 transition flex items-center space-x-1">
+              <i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i>
+              <span class="hidden sm:inline">重置對話</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 推薦發問快捷按鈕 -->
+        <div class="p-3 bg-slate-50 border-b border-slate-200 flex items-center gap-2 overflow-x-auto text-xs whitespace-nowrap">
+          <span class="text-slate-400 font-bold text-[11px] px-1">熱門診斷問答:</span>
+          <button onclick="askPrompt('為什麼 SSD 固態硬碟不能做磁碟重組？')" class="quick-btn bg-white hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 text-slate-700 px-3 py-1.5 rounded-full transition shadow-sm font-medium">
+            💡 為什麼 SSD 不能磁碟重組？
+          </button>
+          <button onclick="askPrompt('SRAM 跟 DRAM 我總是搞混，老師可以教我怎麼記嗎？')" class="quick-btn bg-white hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 text-slate-700 px-3 py-1.5 rounded-full transition shadow-sm font-medium">
+            🧠 SRAM 跟 DRAM 記憶法
+          </button>
+          <button onclick="askPrompt('題目說 2.80GHz，為什麼不是每秒 2.8 億次？')" class="quick-btn bg-white hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 text-slate-700 px-3 py-1.5 rounded-full transition shadow-sm font-medium">
+            ⏱️ 2.80GHz 的十億進位怎麼換算？
+          </button>
+          <button onclick="askPrompt('64位元電腦跟 8GB 記憶體有什麼本質區別？')" class="quick-btn bg-white hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 text-slate-700 px-3 py-1.5 rounded-full transition shadow-sm font-medium">
+            💻 64位元 vs 8GB 記憶體
+          </button>
+          <button onclick="askPrompt('CPU 的五大單元裡面到底包含哪兩個？')" class="quick-btn bg-white hover:bg-indigo-50 hover:text-indigo-600 border border-slate-200 text-slate-700 px-3 py-1.5 rounded-full transition shadow-sm font-medium">
+            ⚙️ CPU 包含哪兩個單元？
+          </button>
+        </div>
+
+        <!-- 聊天對話流 -->
+        <div id="chat-messages" class="flex-1 p-4 sm:p-6 overflow-y-auto space-y-4 custom-scrollbar bg-slate-50/50">
+          <!-- 系統開場白 -->
+          <div class="flex items-start space-x-3 max-w-2xl">
+            <div class="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-sm">
+              AI
+            </div>
+            <div class="bg-white p-4 rounded-2xl rounded-tl-sm border border-slate-200 shadow-sm text-sm text-slate-800 leading-relaxed space-y-2">
+              <p class="font-bold text-indigo-700">冠宇同學你好！我是你的數位科技概論家教老師 👨‍🏫</p>
+              <p>我看過你第 3 回隨堂測驗卷的作答了（考了 52 分）。你很棒的是基本設備認知完全沒問題！失分主要出在「記憶體特性比較」、「硬體專有名詞」與「進位換算」。</p>
+              <p class="text-xs text-slate-500 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                👉 你可以直接點擊上方的「熱門診斷問答」，或者在下方直接把你不懂的觀念、題號發問，我會用最生活化的比喻向你解釋清楚喔！
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 輸入區域 -->
+        <div class="p-4 bg-white border-t border-slate-200">
+          <form id="chat-form" onsubmit="handleChatSubmit(event)" class="flex items-center space-x-3">
+            <input type="text" id="chat-input" placeholder="請輸入你想請教老師的問題（例如：請幫我複習 MIPS 是什麼？）..." class="flex-1 bg-slate-50 border border-slate-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:bg-white transition">
+            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-5 py-3 rounded-2xl text-sm transition shadow-md shadow-indigo-200 flex items-center space-x-1 shrink-0">
+              <span>發送</span>
+              <i data-lucide="send" class="w-4 h-4"></i>
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: 弱點變形練習測驗 (Practice Test) -->
+    <div id="content-practice" class="tab-content hidden space-y-6">
+      <div class="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-200">
+          <div>
+            <div class="flex items-center space-x-2">
+              <span class="bg-emerald-100 text-emerald-800 text-xs font-bold px-2.5 py-0.5 rounded-full">弱點靶向加強</span>
+              <h2 class="text-xl font-black text-slate-900">12 題類似變形題・考前滿分衝刺測驗</h2>
+            </div>
+            <p class="text-xs text-slate-500 mt-1">系統根據你第 3 回錯的 12 道題目核心觀念，重新出題。測驗目標：100 分！</p>
+          </div>
+          <div class="flex items-center space-x-4">
+            <div class="text-right">
+              <span class="text-xs text-slate-400 block font-medium">已完成作答</span>
+              <span id="answered-count" class="text-lg font-bold text-indigo-600">0 <span class="text-xs text-slate-400 font-normal">/ 12 題</span></span>
+            </div>
+            <button onclick="submitQuiz()" id="submit-quiz-btn" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-2.5 rounded-xl text-sm transition shadow-md shadow-emerald-100 flex items-center space-x-1.5">
+              <i data-lucide="check-check" class="w-4 h-4"></i>
+              <span>交卷評分</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 測驗成績回報 Banner (預設隱藏) -->
+        <div id="quiz-result-banner" class="hidden p-6 rounded-2xl bg-gradient-to-r from-emerald-600 to-teal-700 text-white flex flex-col md:flex-row items-center justify-between gap-4 shadow-lg">
+          <div class="space-y-1 text-center md:text-left">
+            <span class="text-xs uppercase tracking-wider font-bold text-emerald-200">變形測驗成績出爐</span>
+            <h3 class="text-2xl font-black" id="quiz-result-title">太棒了！你的努力看得到！</h3>
+            <p class="text-xs text-emerald-100" id="quiz-result-desc">針對 12 道弱點題目的二次測驗分析</p>
+          </div>
+          <div class="flex items-center space-x-6">
+            <div class="text-center">
+              <span class="text-xs text-emerald-200 block">新測驗得分</span>
+              <span class="text-4xl font-black" id="quiz-result-score">0</span>
+            </div>
+            <button onclick="resetQuiz()" class="px-4 py-2 rounded-xl bg-white text-emerald-800 font-bold text-xs hover:bg-emerald-50 transition">
+              重新練習
+            </button>
+          </div>
+        </div>
+
+        <!-- 練習題目列表 -->
+        <div id="quiz-questions-list" class="space-y-6">
+          <!-- 由 JS 動態注入 12 道題 -->
+        </div>
+
+        <!-- 底部提交按鈕 -->
+        <div class="pt-6 border-t border-slate-200 flex justify-end">
+          <button onclick="submitQuiz()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-8 py-3.5 rounded-2xl text-base transition shadow-lg shadow-emerald-200 flex items-center space-x-2">
+            <i data-lucide="award" class="w-5 h-5"></i>
+            <span>立即交卷看成果</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 5: 考前速記錦囊 (Cheatsheet) -->
+    <div id="content-cheatsheet" class="tab-content hidden space-y-6">
+      <div class="bg-white p-6 rounded-3xl border border-slate-200 shadow-sm space-y-6">
+        <div>
+          <h2 class="text-lg font-black text-slate-900 flex items-center space-x-2">
+            <i data-lucide="bookmark" class="w-5 h-5 text-amber-500"></i>
+            <span>資電科硬體核心必考錦囊卡片</span>
+          </h2>
+          <p class="text-xs text-slate-500 mt-1">段考前 10 分鐘必讀！精準破解常考陷阱與對照表</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <!-- 卡片 1: SRAM vs DRAM -->
+          <div class="p-5 rounded-2xl border border-indigo-100 bg-indigo-50/30 space-y-4">
+            <div class="flex items-center justify-between">
+              <h3 class="font-bold text-sm text-indigo-900 flex items-center space-x-2">
+                <i data-lucide="cpu" class="w-4 h-4 text-indigo-600"></i>
+                <span>SRAM vs DRAM 終極對照表</span>
+              </h3>
+              <span class="text-[11px] bg-indigo-100 text-indigo-700 font-bold px-2 py-0.5 rounded-full">高頻考點</span>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-xs text-left border-collapse">
+                <thead>
+                  <tr class="bg-indigo-100/60 text-indigo-900 font-bold">
+                    <th class="p-2 rounded-l-lg">特性項目</th>
+                    <th class="p-2">SRAM (靜態)</th>
+                    <th class="p-2 rounded-r-lg">DRAM (動態)</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-indigo-100 text-slate-700">
+                  <tr><td class="p-2 font-medium">儲存元件</td><td class="p-2">正反器 (Flip-flop)</td><td class="p-2">電容器 (Capacitor)</td></tr>
+                  <tr><td class="p-2 font-medium">充電更新</td><td class="p-2 font-bold text-emerald-600">不需要 (不漏電)</td><td class="p-2 font-bold text-rose-600">需要定期Refresh</td></tr>
+                  <tr><td class="p-2 font-medium">存取速度</td><td class="p-2 font-bold text-indigo-600">極快</td><td class="p-2">較慢</td></tr>
+                  <tr><td class="p-2 font-medium">單位成本</td><td class="p-2">極高</td><td class="p-2 text-emerald-700 font-bold">較低（便宜）</td></tr>
+                  <tr><td class="p-2 font-medium">主要應用</td><td class="p-2 bg-indigo-100/40 font-bold text-indigo-900">快取記憶體 (Cache)</td><td class="p-2 bg-indigo-100/40 font-bold text-indigo-900">主記憶體 (RAM)</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 卡片 2: SSD vs HDD -->
+          <div class="p-5 rounded-2xl border border-amber-100 bg-amber-50/30 space-y-4">
+            <div class="flex items-center justify-between">
+              <h3 class="font-bold text-sm text-amber-900 flex items-center space-x-2">
+                <i data-lucide="hard-drive" class="w-4 h-4 text-amber-600"></i>
+                <span>固態硬碟 (SSD) vs 機械硬碟 (HDD)</span>
+              </h3>
+              <span class="text-[11px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded-full">高頻考點</span>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-xs text-left border-collapse">
+                <thead>
+                  <tr class="bg-amber-100/60 text-amber-900 font-bold">
+                    <th class="p-2 rounded-l-lg">特性項目</th>
+                    <th class="p-2">SSD 固態硬碟</th>
+                    <th class="p-2 rounded-r-lg">HDD 傳統硬碟</th>
+                  </tr>
+                </thead>
+                <tbody class="divide-y divide-amber-100 text-slate-700">
+                  <tr><td class="p-2 font-medium">儲存媒介</td><td class="p-2 font-bold text-indigo-600">快閃記憶體 (NAND Flash)</td><td class="p-2">磁性磁盤</td></tr>
+                  <tr><td class="p-2 font-medium">機械零件</td><td class="p-2 font-bold text-emerald-600">無馬達、無讀寫頭</td><td class="p-2">有高速馬達與磁頭</td></tr>
+                  <tr><td class="p-2 font-medium">抗震能力</td><td class="p-2 text-emerald-600 font-bold">極佳（不怕晃動摔碰）</td><td class="p-2 text-rose-600 font-bold">極差（運轉時怕晃）</td></tr>
+                  <tr><td class="p-2 font-medium">磁碟重組</td><td class="p-2 text-rose-600 font-bold">嚴禁重組 (浪費壽命)</td><td class="p-2 text-indigo-600 font-bold">定期重組可提速</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- 卡片 3: 電腦記憶體速度與容量金字塔 -->
+          <div class="p-5 rounded-2xl border border-emerald-100 bg-emerald-50/30 space-y-4">
+            <div class="flex items-center justify-between">
+              <h3 class="font-bold text-sm text-emerald-900 flex items-center space-x-2">
+                <i data-lucide="layers" class="w-4 h-4 text-emerald-600"></i>
+                <span>記憶體階層：速度 vs 容量金字塔</span>
+              </h3>
+              <span class="text-[11px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">必考順序</span>
+            </div>
+            <div class="space-y-2 text-xs">
+              <div class="bg-rose-500 text-white p-2 rounded-lg font-bold flex justify-between items-center shadow-sm">
+                <span>1. 暫存器 (Register - CPU內部)</span>
+                <span class="text-[10px] bg-white/20 px-2 py-0.5 rounded">速度最快、容量最小(Bits)</span>
+              </div>
+              <div class="bg-indigo-500 text-white p-2 rounded-lg font-bold flex justify-between items-center shadow-sm">
+                <span>2. 快取記憶體 (Cache - SRAM)</span>
+                <span class="text-[10px] bg-white/20 px-2 py-0.5 rounded">速度次快、容量約數MB</span>
+              </div>
+              <div class="bg-blue-500 text-white p-2 rounded-lg font-bold flex justify-between items-center shadow-sm">
+                <span>3. 主記憶體 (RAM - DRAM)</span>
+                <span class="text-[10px] bg-white/20 px-2 py-0.5 rounded">速度中等、容量約 8G~32G</span>
+              </div>
+              <div class="bg-emerald-600 text-white p-2 rounded-lg font-bold flex justify-between items-center shadow-sm">
+                <span>4. 輔助記憶體 (SSD 固態硬碟)</span>
+                <span class="text-[10px] bg-white/20 px-2 py-0.5 rounded">非揮發性、速度數GB/s</span>
+              </div>
+              <div class="bg-slate-600 text-white p-2 rounded-lg font-bold flex justify-between items-center shadow-sm">
+                <span>5. 輔助記憶體 (HDD 機械硬碟 / 光碟)</span>
+                <span class="text-[10px] bg-white/20 px-2 py-0.5 rounded">速度最慢、容量最大最便宜</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- 卡片 4: 單位進位與專有名詞公式 -->
+          <div class="p-5 rounded-2xl border border-slate-200 bg-slate-50/50 space-y-4">
+            <div class="flex items-center justify-between">
+              <h3 class="font-bold text-sm text-slate-800 flex items-center space-x-2">
+                <i data-lucide="calculator" class="w-4 h-4 text-indigo-600"></i>
+                <span>單位換算與重要縮寫解碼</span>
+              </h3>
+              <span class="text-[11px] bg-slate-200 text-slate-700 font-bold px-2 py-0.5 rounded-full">算式速解</span>
+            </div>
+            <div class="grid grid-cols-2 gap-3 text-xs">
+              <div class="bg-white p-3 rounded-xl border border-slate-200">
+                <span class="text-indigo-600 font-bold block mb-1">頻率單位級數 (Hz)</span>
+                <ul class="text-slate-600 space-y-0.5 text-[11px]">
+                  <li>• K = $10^3$ (千次/秒)</li>
+                  <li>• M = $10^6$ (百萬次/秒)</li>
+                  <li>• <strong class="text-rose-600">G = $10^9$ (十億次/秒)</strong></li>
+                  <li>• T = $10^{12}$ (兆次/秒)</li>
+                </ul>
+              </div>
+              <div class="bg-white p-3 rounded-xl border border-slate-200">
+                <span class="text-indigo-600 font-bold block mb-1">常見英文縮寫</span>
+                <ul class="text-slate-600 space-y-0.5 text-[11px]">
+                  <li>• <strong>MIPS:</strong> 每秒百萬指令</li>
+                  <li>• <strong>ALU:</strong> 算術邏輯單元</li>
+                  <li>• <strong>CU:</strong> 控制單元</li>
+                  <li>• <strong>OLED:</strong> 有機發光二極體</li>
+                </ul>
+              </div>
+            </div>
+            <div class="bg-white p-3 rounded-xl border border-slate-200 text-xs text-slate-600">
+              <p>📌 <strong>64位元電腦：</strong>指的是 CPU 內部的「<strong>一般用途暫存器</strong>」寬度為 64 bits，並非時脈也不是記憶體大小！</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- 頁尾 -->
+  <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4">
+      <p>數位科技概論智慧家教系統 © 2026 ・ 為高職資電科學生精心研發設計</p>
+    </div>
+  </footer>
+
+  <!-- 核心資料與互動邏輯 Script -->
+  <script>
+    // 12 道錯題數據庫
+    const mistakeQuestions = [
+      {
+        id: 1,
+        category: 'memory',
+        categoryName: '記憶體特性',
+        question: '隨機存取記憶體（RAM）區分為動態隨機存取記憶體（DRAM）及靜態隨機存取記憶體（SRAM）兩種，請問下列哪一項是SRAM優於DRAM的特點？',
+        options: [
+          { key: 'A', text: '單位資料的存取速度較快' },
+          { key: 'B', text: '單位面積所能儲存資料量較小' },
+          { key: 'C', text: '需要持續充電更新（refresh），才能確保資料完整' },
+          { key: 'D', text: '每單位資料的儲存成本較低' }
+        ],
+        studentAnswer: 'D',
+        correctAnswer: 'A',
+        trapAnalysis: '你選了 (D)。注意：(D)「每單位資料儲存成本較低」是 DRAM 的優點，不是 SRAM！SRAM 內部使用正反器電路（6個電晶體），成本極為昂貴。SRAM 真正的最大優點是「速度極快」且「不需要充電更新」。',
+        quickTip: 'SRAM = Speed(速度快、做快取)；DRAM = Data(便宜大容量、做主記憶體)。'
+      },
+      {
+        id: 5,
+        category: 'cpu',
+        categoryName: 'CPU架構',
+        question: '在電腦的組成單元中，下列哪兩個單元合稱為中央處理單元（CPU）？',
+        options: [
+          { key: 'A', text: '輸入單元及控制單元' },
+          { key: 'B', text: '控制單元及算術／邏輯單元' },
+          { key: 'C', text: '輸入單元及輸出單元' },
+          { key: 'D', text: '算術／邏輯單元及記憶單元' }
+        ],
+        studentAnswer: 'D',
+        correctAnswer: 'B',
+        trapAnalysis: '你選了 (D)。馮紐曼架構中，記憶單元（MU）在五大單元中是獨立單元，不隸屬於 CPU！CPU 的兩大核心靈魂是「算術邏輯單元 (ALU)」與「控制單元 (CU)」。',
+        quickTip: 'CPU = 心臟+大腦 = 算數(ALU) + 指揮(CU)。'
+      },
+      {
+        id: 7,
+        category: 'io',
+        categoryName: '介面與週邊',
+        question: '關於“熱插拔”的敘述，何者為真？',
+        options: [
+          { key: 'A', text: '只能在開機的情況下插拔' },
+          { key: 'B', text: '只能在關機的情況下插拔' },
+          { key: 'C', text: '在關機及開機的情況下皆可插拔' },
+          { key: 'D', text: '只有當主機溫度高於一定溫度時才可插拔' }
+        ],
+        studentAnswer: 'A',
+        correctAnswer: 'C',
+        trapAnalysis: '你選了 (A)。熱插拔（Hot Plug）的優勢是「支援通電開機時插拔」，但關機斷電時本來就可以安全插拔！因此在開機與關機狀態下皆可插拔。',
+        quickTip: '熱插拔不是「只能熱著拔」，而是「連開機通電時都能拔」！'
+      },
+      {
+        id: 9,
+        category: 'cpu',
+        categoryName: 'CPU架構',
+        question: '微軟公司在台灣成立了亞洲第一座「雲端運算」中心，以整合電腦的運算資源，來提供給國內各項創新研究計畫使用。一般而言，研究計畫都需要大量的運算，包括計算、比對、配對等不同的處理，請問電腦中負責這些運算工作的是下列哪一個單元？',
+        options: [
+          { key: 'A', text: 'CU (控制單元)' },
+          { key: 'B', text: 'MU (記憶單元)' },
+          { key: 'C', text: 'ALU (算術邏輯單元)' },
+          { key: 'D', text: 'OU (輸出單元)' }
+        ],
+        studentAnswer: 'B',
+        correctAnswer: 'C',
+        trapAnalysis: '你選了 (B) MU。請抓住題幹核心關鍵字：「運算、計算、比對、配對」！記憶單元(MU)只能「存放資料」，完全沒有動腦計算的能力；真正執行加減乘除與邏輯比對的是 ALU (算術邏輯單元)。',
+        quickTip: '動腦算數比大小找 ALU；單純儲存放箱子找 MU。'
+      },
+      {
+        id: 10,
+        category: 'specs',
+        categoryName: '規格換算',
+        question: 'MIPS 是一種衡量電腦CPU之測量指標，其中I代表：',
+        options: [
+          { key: 'A', text: '資訊 (Information)' },
+          { key: 'B', text: '指令 (Instruction)' },
+          { key: 'C', text: '輸入 (Input)' },
+          { key: 'D', text: '內部 (Internal)' }
+        ],
+        studentAnswer: 'C',
+        correctAnswer: 'B',
+        trapAnalysis: '你選了 (C) Input。MIPS 全名為 Million Instructions Per Second（每秒百萬條指令數），用來衡量 CPU 每秒能處理多少條指令，所以 I 代表 Instruction（指令）。',
+        quickTip: 'MIPS = Million Instructions Per Second（每秒百萬「指令」）。'
+      },
+      {
+        id: 12,
+        category: 'specs',
+        categoryName: '規格換算',
+        question: '志華購買了一台安插8GB記憶體的64位元電腦，下列有關該台電腦的敘述何者正確？',
+        options: [
+          { key: 'A', text: '8GB指的是快取記憶體的容量' },
+          { key: 'B', text: '一般用途暫存器的位元數為8GB' },
+          { key: 'C', text: 'CPU時脈頻率為64位元' },
+          { key: 'D', text: '64位元指的是一般用途暫存器的位元數' }
+        ],
+        studentAnswer: 'A',
+        correctAnswer: 'D',
+        trapAnalysis: '你選了 (A)。快取記憶體(Cache)非常昂貴，容量通常只有幾MB，8GB指的是「主記憶體(DRAM)」；而幾位元（64-bit）電腦指的就是 CPU 內部「一般用途暫存器」的位元寬度。',
+        quickTip: '幾位元 = 暫存器寬度；幾GB = 主記憶體容量！'
+      },
+      {
+        id: 15,
+        category: 'specs',
+        categoryName: '規格換算',
+        question: '聯想推出搭載Intel Core i7-1165G7 2.80GHz CPU的「變形筆電」，請根據以上敘述判斷下列何者正確？',
+        options: [
+          { key: 'A', text: 'Intel為CPU的產品型號' },
+          { key: 'B', text: 'Core i7-1165G7為CPU的製造廠商' },
+          { key: 'C', text: 'CPU的時脈頻率為2.80GHz' },
+          { key: 'D', text: '石英振盪器每秒振盪2.80億次' }
+        ],
+        studentAnswer: 'D',
+        correctAnswer: 'C',
+        trapAnalysis: '你選了 (D)。這題是單位陷阱！$1\\text{ GHz} = 10^9\\text{ Hz} = 10\\text{ 億次/秒}$。因此 2.80GHz 是每秒振盪「28億次」，不是 2.80 億次（那是 280MHz）。因此 (C) 直接給定時脈頻率為 2.80GHz 是最標準的正確敘述。',
+        quickTip: 'G是十億($10^9$)！2.80GHz = 28億次/秒！'
+      },
+      {
+        id: 16,
+        category: 'memory',
+        categoryName: '記憶體特性',
+        question: '有關固態硬碟（SSD）與傳統機械硬碟（HDD）的敘述，下列何者正確？',
+        options: [
+          { key: 'A', text: 'HDD中的儲存元件是採用快閃記憶體' },
+          { key: 'B', text: 'SSD採用低噪音馬達驅動讀寫頭並具抗震特點' },
+          { key: 'C', text: 'HDD沒有搜尋資料時間，僅須考量資料傳輸時間' },
+          { key: 'D', text: 'SSD在經過長時間及多次使用致使內部儲存資料零散，仍可不須進行磁碟重組' }
+        ],
+        studentAnswer: 'B',
+        correctAnswer: 'D',
+        trapAnalysis: '你選了 (B)。SSD 內部「完全沒有馬達與讀寫頭」！它是純電子晶片。SSD 讀取隨機片段的速度極快，且磁碟重組會大量抹寫快閃記憶體、損耗壽命，所以 SSD「絕對不需要重組」。',
+        quickTip: 'SSD 零馬達、純晶片；不怕震動、禁止磁碟重組！'
+      },
+      {
+        id: 17,
+        category: 'memory',
+        categoryName: '記憶體特性',
+        question: '為了減少對主記憶體的存取次數，以提升電腦整體執行速度，個人電腦的快取記憶體（cache memory）通常以下列何者為材質？',
+        options: [
+          { key: 'A', text: 'DRAM' },
+          { key: 'B', text: 'EPROM' },
+          { key: 'C', text: 'ROM' },
+          { key: 'D', text: 'SRAM' }
+        ],
+        studentAnswer: 'B',
+        correctAnswer: 'D',
+        trapAnalysis: '你選了 (B) EPROM。快取記憶體（Cache）是專門用來跟超級快速的 CPU 搭配的，所以必須選用速度最快的「SRAM（靜態隨機存取記憶體）」。',
+        quickTip: '看到 Cache 必選 SRAM！'
+      },
+      {
+        id: 21,
+        category: 'memory',
+        categoryName: '記憶體特性',
+        question: 'MacBook Air採用固態硬碟大幅降低機身的厚度，請問該筆電採用的固態硬碟與傳統硬碟，差異為何？',
+        options: [
+          { key: 'A', text: '固態硬碟的體積較大' },
+          { key: 'B', text: '傳統硬碟的耐震度較佳' },
+          { key: 'C', text: '固態硬碟是使用快閃記憶體來作為儲存元件' },
+          { key: 'D', text: '傳統硬碟的儲存容量通常較小' }
+        ],
+        studentAnswer: 'D',
+        correctAnswer: 'C',
+        trapAnalysis: '你選了 (D)。同等價位下，傳統硬碟(HDD)的儲存容量其實比 SSD 更大更便宜；SSD 能夠做得很輕薄、耐震，關鍵就是使用「快閃記憶體 (Flash Memory)」晶片。',
+        quickTip: 'SSD 的靈魂元件 = 快閃記憶體 (NAND Flash)！'
+      },
+      {
+        id: 22,
+        category: 'io',
+        categoryName: '介面與週邊',
+        question: '三星公司推出的某款Android智慧型手機，宣稱採用AMOLED技術，可使螢幕色彩更加鮮豔，請問此款手機的螢幕最可能是採用下列哪一種材質所製成的？',
+        options: [
+          { key: 'A', text: '陰極射線管' },
+          { key: 'B', text: '液晶' },
+          { key: 'C', text: '有機發光二極體' },
+          { key: 'D', text: '電漿' }
+        ],
+        studentAnswer: 'B',
+        correctAnswer: 'C',
+        trapAnalysis: '你選了 (B) 液晶。液晶是 LCD；而 AMOLED 中的「OLED」就是 Organic Light-Emitting Diode，中文即為「有機發光二極體」，能自發光且色彩鮮豔。',
+        quickTip: 'OLED 的 O 就是 Organic (有機)，LED 就是發光二極體！'
+      },
+      {
+        id: 24,
+        category: 'io',
+        categoryName: '介面與週邊',
+        question: '裕書的筆記型電腦內建有Type C、HDMI、line out等連接埠，下列為他使用些連接埠的操作，請問何者不正確？',
+        options: [
+          { key: 'A', text: '利用line out連接埠來上網' },
+          { key: 'B', text: '利用Type C連接埠來為手機充電' },
+          { key: 'C', text: '利用Type C連接埠將手機中的資料傳送至電腦' },
+          { key: 'D', text: '利用HDMI連接埠將手機畫面傳送至電視播放' }
+        ],
+        studentAnswer: 'D',
+        correctAnswer: 'A',
+        trapAnalysis: '你選了 (D)。這題要選「不正確」的！Line Out 是音訊輸出孔（輸出聲音到耳機喇叭），根本沒有網路功能，絕對不能上網；而 HDMI 本來就是用來將影音輸出到電視的。',
+        quickTip: 'Line Out = 聲音輸出；上網請找 RJ-45 網路孔或 Wi-Fi！'
+      }
+    ];
+
+    // 12 道變形測驗題庫 (強化訓練)
+    const practiceQuestions = [
+      {
+        id: 101,
+        title: '變形題 1 (對應第1題/SRAM特性)',
+        question: '關於快取記憶體所使用的靜態隨機存取記憶體（SRAM），下列敘述何者正確？',
+        options: [
+          '必須每隔數毫秒執行充電更新（Refresh）',
+          '單位儲存成本比主記憶體便宜許多',
+          '採用雙穩態正反器儲存資料，存取速度高於 DRAM',
+          '斷電後資料依然能永久保存不流失'
+        ],
+        correct: 2,
+        explain: 'SRAM採用正反器電路，速度極快且不需要Refresh，但為揮發性記憶體，斷電資料即消失。'
+      },
+      {
+        id: 102,
+        title: '變形題 2 (對應第5題/CPU組成)',
+        question: '中央處理單元（CPU）被譽為電腦的心臟與大腦，它主要由哪兩個單元緊密組合而成？',
+        options: [
+          '輸入單元 (IU) 與 輸出單元 (OU)',
+          '算術邏輯單元 (ALU) 與 控制單元 (CU)',
+          '控制單元 (CU) 與 記憶單元 (MU)',
+          '算術邏輯單元 (ALU) 與 記憶單元 (MU)'
+        ],
+        correct: 1,
+        explain: 'CPU 核心包含 ALU (負責運算比對) 與 CU (負責指揮解碼控制)。MU 屬於五大單元中的獨立記憶單元。'
+      },
+      {
+        id: 103,
+        title: '變形題 3 (對應第7題/熱插拔定義)',
+        question: '小明買了一支支援熱插拔（Hot Swapping）的 USB 隨身碟，下列哪一種使用方式是符合該特性的？',
+        options: [
+          '只能在電腦完全關機斷電時才能拔除',
+          '只能在電腦開機進入作業系統時拔除，關機時禁止插拔',
+          '電腦無論在開機運作中或是關機斷電狀態下，均可插拔使用',
+          '只有當機身溫度超過 50 度時才被允許插拔'
+        ],
+        correct: 2,
+        explain: '熱插拔技術允許使用者在不關機的情況下直接增減周邊，關機狀態下自然也能插拔。'
+      },
+      {
+        id: 104,
+        title: '變形題 4 (對應第9題/運算單元職責)',
+        question: '當氣象局超級電腦進行「颱風路徑模擬運算」，需要進行大量的浮點數加減乘除與數值比較時，負責這項工作的單元是？',
+        options: [
+          '控制單元 (CU)',
+          '記憶單元 (MU)',
+          '算術邏輯單元 (ALU)',
+          '輸出單元 (OU)'
+        ],
+        correct: 2,
+        explain: '算術計算（加減乘除）與邏輯比較（大小、比對）全部由算術邏輯單元 (ALU) 全權負責。'
+      },
+      {
+        id: 105,
+        title: '變形題 5 (對應第10題/MIPS指標)',
+        question: '某伺服器標示其 CPU 處理效能高達 5000 MIPS，請問此處的 MIPS 指的是什麼？',
+        options: [
+          '每秒處理五千萬筆輸入 (Input)',
+          '每秒執行百萬條指令 (Million Instructions Per Second)',
+          '每秒傳輸百萬封網路訊息 (Messages)',
+          '內部記憶體頻寬速度指標 (Memory Internal Performance)'
+        ],
+        correct: 1,
+        explain: 'MIPS = Million Instructions Per Second，代表每秒可執行多少百萬條指令。'
+      },
+      {
+        id: 106,
+        title: '變形題 6 (對應第12題/64位元電腦定義)',
+        question: '我們常聽到的「64 位元處理器」中的 64 位元，其在硬體架構上最核心的意義是？',
+        options: [
+          '主記憶體最大只能安裝 64GB',
+          'CPU 內部一般用途暫存器（Register）與內部匯流排的寬度為 64 位元',
+          'CPU 的工作時脈為 64 GHz',
+          '硬碟每次開機傳輸速率固定為 64 bit/s'
+        ],
+        correct: 1,
+        explain: '幾位元處理器代表 CPU 暫存器（Register）的大小與一次能平行處理的資料寬度為 64 位元。'
+      },
+      {
+        id: 107,
+        title: '變形題 7 (對應第15題/時脈頻率換算)',
+        question: '某電競處理器的時脈頻率為 4.0 GHz，這代表其內部的石英振盪器每秒振盪幾次？',
+        options: [
+          '4 百萬次 (4,000,000 次)',
+          '4 億次 (400,000,000 次)',
+          '40 億次 (4,000,000,000 次)',
+          '4 兆次'
+        ],
+        correct: 2,
+        explain: '1 GHz = 10^9 Hz = 10 億次/秒，因此 4.0 GHz = 40 億次/秒。'
+      },
+      {
+        id: 108,
+        title: '變形題 8 (對應第16題/SSD維護觀念)',
+        question: '關於固態硬碟（SSD）的日常使用與保養，下列哪一項建議是「最正確」的？',
+        options: [
+          '每週定期進行一次磁碟重組（Defrag），可提升讀取速度',
+          'SSD 是純晶片架構，無機械馬達與讀寫頭，不需也不應進行磁碟重組',
+          'SSD 內部有微型磁頭，劇烈搖晃時容易造成壞軌',
+          'SSD 的讀寫速度與傳統機械硬碟完全相同'
+        ],
+        correct: 1,
+        explain: 'SSD以快閃記憶體晶片儲存，尋找資料無磁頭位移延遲，磁碟重組只會大量消耗抹寫次數降低壽命，切勿重組！'
+      },
+      {
+        id: 109,
+        title: '變形題 9 (對應第17題/快取材質)',
+        question: 'CPU 內部的 L1、L2 快取記憶體（Cache）為了達到與 CPU 核心匹配的極限存取速度，通常採用何種材質製造？',
+        options: [
+          'DRAM (動態隨機存取記憶體)',
+          'SRAM (靜態隨機存取記憶體)',
+          'EEPROM (電子抹除式唯讀記憶體)',
+          'Flash Memory (快閃記憶體)'
+        ],
+        correct: 1,
+        explain: '快取記憶體（Cache）講求極致速度，一律採用 SRAM 製造！'
+      },
+      {
+        id: 110,
+        title: '變形題 10 (對應第21題/SSD儲存元件)',
+        question: '智慧型手機與輕薄筆電普遍放棄傳統硬碟改採 SSD，主要原因是 SSD 採用了哪種儲存元件，兼具省電、輕薄與耐震？',
+        options: [
+          '快閃記憶體 (Flash Memory)',
+          '動態隨機存取記憶體 (DRAM)',
+          '微型磁性光碟片',
+          '微型真空管'
+        ],
+        correct: 0,
+        explain: 'SSD 是利用快閃記憶體（Flash Memory）作為非揮發性儲存媒介。'
+      },
+      {
+        id: 111,
+        title: '變形題 11 (對應第22題/螢幕面板技術)',
+        question: '高端智慧手錶與手機螢幕常採用的 OLED / AMOLED 面板，其全名代表的發光材質是？',
+        options: [
+          '液晶分子 (Liquid Crystal)',
+          '有機發光二極體 (Organic Light-Emitting Diode)',
+          '電漿放電氣體 (Plasma)',
+          '陰極射線管 (CRT)'
+        ],
+        correct: 1,
+        explain: 'OLED 中文即為「有機發光二極體」，能自體發光，不需背光模組，色彩飽和對比度極高。'
+      },
+      {
+        id: 112,
+        title: '變形題 12 (對應第24題/連接埠功能)',
+        question: '小華想把筆電中的 YouTube 影片投射到客廳的大螢幕電視上（同時包含高畫質影像與聲音），他應該使用下列哪一種連接埠？',
+        options: [
+          'Line Out 音訊埠',
+          'HDMI 連接埠',
+          'PS/2 連接埠',
+          'VGA 連接埠（僅能傳輸影像）'
+        ],
+        correct: 1,
+        explain: 'HDMI (High-Definition Multimedia Interface) 能單一線纜同時傳輸高畫質視訊與多聲道音訊至電視。Line Out 僅能輸出音訊。'
+      }
+    ];
+
+    // 使用者在測驗中的答案
+    let userQuizAnswers = {};
+
+    // 初始化渲染
+    window.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      renderRadarChart();
+      renderMistakes('all');
+      renderPracticeQuestions();
+    });
+
+    // 切換 Tab
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.classList.remove('active', 'border-indigo-600', 'text-indigo-600');
+        btn.classList.add('border-transparent', 'text-slate-500');
+      });
+      document.querySelectorAll('.tab-content').forEach(content => {
+        content.classList.add('hidden');
+      });
+
+      const activeBtn = document.getElementById(`tab-${tabId}`);
+      if (activeBtn) {
+        activeBtn.classList.add('active', 'border-indigo-600', 'text-indigo-600');
+        activeBtn.classList.remove('border-transparent', 'text-slate-500');
+      }
+
+      const activeContent = document.getElementById(`content-${tabId}`);
+      if (activeContent) {
+        activeContent.classList.remove('hidden');
+      }
+
+      lucide.createIcons();
+    }
+
+    // 渲染雷達圖
+    function renderRadarChart() {
+      const ctx = document.getElementById('radarChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'radar',
+        data: {
+          labels: ['記憶體與儲存', 'CPU與五大架構', '規格與單位換算', '周邊介面與I/O'],
+          datasets: [{
+            label: '陳同學掌握度 (%)',
+            data: [43, 67, 25, 63],
+            backgroundColor: 'rgba(99, 102, 241, 0.25)',
+            borderColor: 'rgb(79, 70, 229)',
+            pointBackgroundColor: 'rgb(79, 70, 229)',
+            pointBorderColor: '#fff',
+            pointHoverBackgroundColor: '#fff',
+            pointHoverBorderColor: 'rgb(79, 70, 229)',
+            borderWidth: 2
+          }, {
+            label: '及格基準線 (%)',
+            data: [60, 60, 60, 60],
+            backgroundColor: 'transparent',
+            borderColor: 'rgba(239, 68, 68, 0.4)',
+            borderDash: [4, 4],
+            borderWidth: 1.5,
+            pointRadius: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            r: {
+              angleLines: { color: 'rgba(0, 0, 0, 0.06)' },
+              grid: { color: 'rgba(0, 0, 0, 0.06)' },
+              suggestedMin: 0,
+              suggestedMax: 100,
+              ticks: { stepSize: 20, display: false }
+            }
+          },
+          plugins: {
+            legend: { display: false }
+          }
+        }
+      });
+    }
+
+    // 渲染錯題本卡片
+    function renderMistakes(categoryFilter) {
+      const container = document.getElementById('mistakes-container');
+      container.innerHTML = '';
+
+      const filtered = categoryFilter === 'all' 
+        ? mistakeQuestions 
+        : mistakeQuestions.filter(q => q.category === categoryFilter);
+
+      filtered.forEach(q => {
+        const card = document.createElement('div');
+        card.className = "bg-white rounded-2xl border border-slate-200/90 p-5 shadow-sm space-y-4 hover:border-indigo-300 transition";
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <div class="flex items-center space-x-2">
+              <span class="w-7 h-7 rounded-xl bg-rose-100 text-rose-700 font-black text-xs flex items-center justify-center">第 ${q.id} 題</span>
+              <span class="text-xs font-bold text-slate-500 bg-slate-100 px-2.5 py-0.5 rounded-full">${q.categoryName}</span>
+            </div>
+            <div class="flex items-center space-x-2 text-xs">
+              <span class="text-slate-400">你選: <strong class="text-rose-600">(${q.studentAnswer}) ❌</strong></span>
+              <span class="text-slate-300">|</span>
+              <span class="text-emerald-700 font-bold">正解: (${q.correctAnswer}) ✔</span>
+            </div>
+          </div>
+
+          <p class="text-sm font-bold text-slate-900 leading-relaxed">${q.question}</p>
+
+          <div class="space-y-1.5 text-xs">
+            ${q.options.map(opt => {
+              let optStyle = "bg-slate-50 text-slate-600 border border-slate-100";
+              let badge = "";
+              if (opt.key === q.studentAnswer) {
+                optStyle = "bg-rose-50 text-rose-700 border border-rose-200 font-bold";
+                badge = `<span class="ml-auto text-[10px] bg-rose-200 text-rose-800 px-1.5 py-0.5 rounded">你的作答</span>`;
+              }
+              if (opt.key === q.correctAnswer) {
+                optStyle = "bg-emerald-50 text-emerald-800 border border-emerald-300 font-bold";
+                badge = `<span class="ml-auto text-[10px] bg-emerald-200 text-emerald-800 px-1.5 py-0.5 rounded">正確答案</span>`;
+              }
+              return `
+                <div class="p-2.5 rounded-xl flex items-center justify-between ${optStyle}">
+                  <span><strong class="mr-2 font-black">(${opt.key})</strong> ${opt.text}</span>
+                  ${badge}
+                </div>
+              `;
+            }).join('')}
+          </div>
+
+          <!-- 盲點解讀與破題秒殺 -->
+          <div class="pt-3 border-t border-slate-100 space-y-2">
+            <div class="text-xs text-slate-600 bg-amber-50/60 p-3 rounded-xl border border-amber-100/80 leading-relaxed">
+              <span class="font-bold text-amber-800 block mb-0.5 flex items-center gap-1">
+                <i data-lucide="help-circle" class="w-3.5 h-3.5 text-amber-600"></i>
+                為什麼你會選 (${q.studentAnswer})？
+              </span>
+              ${q.trapAnalysis}
+            </div>
+
+            <div class="text-xs font-semibold text-indigo-700 bg-indigo-50/70 p-2.5 rounded-xl border border-indigo-100 flex items-center justify-between">
+              <span class="flex items-center gap-1.5">
+                <i data-lucide="lightbulb" class="w-4 h-4 text-amber-500 shrink-0"></i>
+                <span>${q.quickTip}</span>
+              </span>
+              <button onclick="askPrompt('請老師幫我詳細講解第 ${q.id} 題：${q.question}')" class="text-[11px] bg-indigo-600 hover:bg-indigo-700 text-white px-2 py-1 rounded-lg shrink-0 ml-2 transition">
+                問家教
+              </button>
+            </div>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+
+    // 錯題過濾標籤切換
+    function filterMistakes(cat) {
+      document.querySelectorAll('.filter-btn').forEach(b => {
+        b.classList.remove('active', 'bg-indigo-600', 'text-white');
+        b.classList.add('bg-slate-100', 'text-slate-600');
+      });
+      const btn = document.getElementById(`btn-filter-${cat}`);
+      if (btn) {
+        btn.classList.add('active', 'bg-indigo-600', 'text-white');
+        btn.classList.remove('bg-slate-100', 'text-slate-600');
+      }
+      renderMistakes(cat);
+    }
+
+    // 渲染變形測驗題
+    function renderPracticeQuestions() {
+      const container = document.getElementById('quiz-questions-list');
+      container.innerHTML = '';
+
+      practiceQuestions.forEach((q, idx) => {
+        const qCard = document.createElement('div');
+        qCard.id = `practice-card-${idx}`;
+        qCard.className = "p-5 rounded-2xl border border-slate-200 bg-white space-y-4 shadow-sm";
+        qCard.innerHTML = `
+          <div class="flex items-center justify-between">
+            <span class="text-xs font-black text-indigo-600 bg-indigo-50 px-2.5 py-1 rounded-lg border border-indigo-100">${q.title}</span>
+            <span id="quiz-status-${idx}" class="text-xs text-slate-400 font-medium">尚未作答</span>
+          </div>
+          <p class="text-sm font-bold text-slate-800 leading-relaxed">${idx + 1}. ${q.question}</p>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+            ${q.options.map((opt, optIdx) => `
+              <button onclick="chooseQuizAnswer(${idx}, ${optIdx})" id="quiz-opt-${idx}-${optIdx}" class="quiz-option text-left p-3 rounded-xl border border-slate-200 hover:border-indigo-400 hover:bg-indigo-50/50 transition flex items-center space-x-2">
+                <span class="w-5 h-5 rounded-full border border-slate-300 flex items-center justify-center text-[10px] font-bold text-slate-500 shrink-0">
+                  ${String.fromCharCode(65 + optIdx)}
+                </span>
+                <span class="text-slate-700">${opt}</span>
+              </button>
+            `).join('')}
+          </div>
+          <div id="quiz-explain-${idx}" class="hidden p-3 rounded-xl text-xs leading-relaxed"></div>
+        `;
+        container.appendChild(qCard);
+      });
+      updateAnsweredCount();
+    }
+
+    // 作答選擇
+    function chooseQuizAnswer(qIdx, optIdx) {
+      userQuizAnswers[qIdx] = optIdx;
+      // 更新樣式
+      for (let i = 0; i < 4; i++) {
+        const btn = document.getElementById(`quiz-opt-${qIdx}-${i}`);
+        if (btn) {
+          btn.classList.remove('bg-indigo-600', 'text-white', 'border-indigo-600', 'font-bold');
+          btn.classList.add('border-slate-200', 'text-slate-700');
+          const circle = btn.querySelector('span:first-child');
+          if (circle) {
+            circle.classList.remove('bg-white', 'text-indigo-600', 'border-white');
+            circle.classList.add('border-slate-300', 'text-slate-500');
+          }
+        }
+      }
+      const selectedBtn = document.getElementById(`quiz-opt-${qIdx}-${optIdx}`);
+      if (selectedBtn) {
+        selectedBtn.classList.remove('border-slate-200', 'text-slate-700');
+        selectedBtn.classList.add('bg-indigo-600', 'text-white', 'border-indigo-600', 'font-bold');
+        const circle = selectedBtn.querySelector('span:first-child');
+        if (circle) {
+          circle.classList.remove('border-slate-300', 'text-slate-500');
+          circle.classList.add('bg-white', 'text-indigo-600', 'border-white');
+        }
+      }
+      const status = document.getElementById(`quiz-status-${qIdx}`);
+      if (status) {
+        status.textContent = '已作答';
+        status.className = 'text-xs text-indigo-600 font-bold';
+      }
+      updateAnsweredCount();
+    }
+
+    function updateAnsweredCount() {
+      const count = Object.keys(userQuizAnswers).length;
+      document.getElementById('answered-count').innerHTML = `${count} <span class="text-xs text-slate-400 font-normal">/ 12 題</span>`;
+    }
+
+    // 提交測驗
+    function submitQuiz() {
+      const answeredCount = Object.keys(userQuizAnswers).length;
+      if (answeredCount < 12) {
+        if (!confirm(`你還有 ${12 - answeredCount} 題尚未作答，確定現在交卷嗎？`)) {
+          return;
+        }
+      }
+
+      let correctCount = 0;
+      practiceQuestions.forEach((q, idx) => {
+        const userAns = userQuizAnswers[idx];
+        const explainBox = document.getElementById(`quiz-explain-${idx}`);
+        const card = document.getElementById(`practice-card-${idx}`);
+        explainBox.classList.remove('hidden');
+
+        if (userAns === q.correct) {
+          correctCount++;
+          explainBox.className = 'p-3 rounded-xl text-xs bg-emerald-50 text-emerald-800 border border-emerald-200';
+          explainBox.innerHTML = `✔ <strong>恭喜答對！</strong> ${q.explain}`;
+          card.classList.add('border-emerald-300');
+        } else {
+          explainBox.className = 'p-3 rounded-xl text-xs bg-rose-50 text-rose-800 border border-rose-200';
+          explainBox.innerHTML = `❌ <strong>這題答錯囉！</strong> 正確答案為 <strong>(${String.fromCharCode(65 + q.correct)})</strong>。<br>${q.explain}`;
+          card.classList.add('border-rose-300');
+        }
+      });
+
+      const score = Math.round((correctCount / 12) * 100);
+      const banner = document.getElementById('quiz-result-banner');
+      banner.classList.remove('hidden');
+      document.getElementById('quiz-result-score').textContent = score;
+
+      if (score >= 80) {
+        confetti({
+          particleCount: 100,
+          spread: 70,
+          origin: { y: 0.6 }
+        });
+        document.getElementById('quiz-result-title').textContent = "🎉 太出色了！你已經完全克服這12道盲點！";
+        document.getElementById('quiz-result-desc').textContent = `本次答對 ${correctCount} / 12 題，弱點克服率高達 ${score}%，段考肯定高分！`;
+      } else {
+        document.getElementById('quiz-result-title').textContent = "再加把勁！答對 " + correctCount + " 題";
+        document.getElementById('quiz-result-desc').textContent = "看看下方標記紅色的題目解析，再請教 AI 家教幫你複習喔！";
+      }
+
+      banner.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function resetQuiz() {
+      userQuizAnswers = {};
+      document.getElementById('quiz-result-banner').classList.add('hidden');
+      renderPracticeQuestions();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // 聊天室邏輯
+    function addChatMessage(role, content) {
+      const messagesContainer = document.getElementById('chat-messages');
+      const msgDiv = document.createElement('div');
+
+      if (role === 'user') {
+        msgDiv.className = "flex items-start justify-end space-x-3";
+        msgDiv.innerHTML = `
+          <div class="bg-indigo-600 text-white p-3.5 rounded-2xl rounded-tr-sm shadow-sm text-sm max-w-xl leading-relaxed">
+            ${content}
+          </div>
+          <div class="w-8 h-8 rounded-xl bg-slate-800 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-sm">
+            冠宇
+          </div>
+        `;
+      } else {
+        msgDiv.className = "flex items-start space-x-3 max-w-2xl";
+        msgDiv.innerHTML = `
+          <div class="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-sm">
+            AI
+          </div>
+          <div class="bg-white p-4 rounded-2xl rounded-tl-sm border border-slate-200 shadow-sm text-sm text-slate-800 leading-relaxed space-y-2">
+            ${content}
+          </div>
+        `;
+      }
+
+      messagesContainer.appendChild(msgDiv);
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      lucide.createIcons();
+    }
+
+    function askPrompt(promptText) {
+      switchTab('tutor');
+      addChatMessage('user', promptText);
+      simulateTutorResponse(promptText);
+    }
+
+    function handleChatSubmit(e) {
+      e.preventDefault();
+      const input = document.getElementById('chat-input');
+      const text = input.value.trim();
+      if (!text) return;
+
+      addChatMessage('user', text);
+      input.value = '';
+      simulateTutorResponse(text);
+    }
+
+    // 智慧家教知識庫與引導回應
+    function simulateTutorResponse(question) {
+      // 顯示輸入中狀態
+      const messagesContainer = document.getElementById('chat-messages');
+      const typingDiv = document.createElement('div');
+      typingDiv.id = 'typing-indicator';
+      typingDiv.className = "flex items-center space-x-2 text-slate-400 text-xs p-2";
+      typingDiv.innerHTML = `<span class="animate-bounce">●</span><span class="animate-bounce delay-100">●</span><span class="animate-bounce delay-200">●</span> <span class="text-slate-500 font-medium">家教老師正在為你思考生活化比喻...</span>`;
+      messagesContainer.appendChild(typingDiv);
+      messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+      setTimeout(() => {
+        const indicator = document.getElementById('typing-indicator');
+        if (indicator) indicator.remove();
+
+        let reply = "";
+        const lower = question.toLowerCase();
+
+        if (lower.includes('ssd') || lower.includes('重組') || lower.includes('磁碟重組')) {
+          reply = `
+            <p class="font-bold text-indigo-700">冠宇，這個概念段考超愛考！記住這兩點就無敵了：</p>
+            <p>1. <strong>傳統機械硬碟 (HDD) 為什麼要重組？</strong><br>因為 HDD 有一顆真實的「旋轉馬達」跟一根「機械讀寫針頭」。當檔案被切碎分散在磁盤各個角落時，針頭必須跑來跑去尋找，造成嚴重的延遲。把碎片拼在一起（重組）能讓針頭一次讀完，速度變快！</p>
+            <p>2. <strong>為什麼 SSD 絕對「禁止」重組？</strong><br>SSD 是由「快閃記憶體 (Flash Memory) 晶片」構成的，完全沒有針頭與馬達！讀取任何記憶體位址的時間都幾乎是一瞬間的（微秒級）。最嚴重的是：快閃記憶體晶片是有「寫入壽命限制（抹寫次數）」的。如果跑磁碟重組，會瘋狂地把檔案搬來搬去、大量抹寫，<strong>不僅速度完全沒提升，還會直接殺死你的 SSD 壽命</strong>！</p>
+            <p class="text-xs bg-amber-50 p-2.5 rounded-xl border border-amber-200 text-amber-900 font-medium">
+              💡 <strong>老師口訣：</strong>SSD 沒針頭、不怕震；隨你讀、切勿重組！
+            </p>
+          `;
+        } else if (lower.includes('sram') || lower.includes('dram')) {
+          reply = `
+            <p class="font-bold text-indigo-700">這是一年級資電科最容易打結的雙胞胎！老師用「便利貼與白板」比喻給你聽：</p>
+            <p>⚡ <strong>SRAM (靜態RAM - 快取記憶體 Cache):</strong><br>想像成<strong>磁吸式白板</strong>。字寫上去就牢牢吸住，不用管它；讀取極快、不用重畫，但一片造價非常貴（電路複雜，由6顆電晶體正反器構成）。所以電腦只買得起一點點（幾MB）放在 CPU 旁邊當快取！</p>
+            <p>🔋 <strong>DRAM (動態RAM - 主記憶體):</strong><br>想像成<strong>漏水的水桶</strong>（電容儲存電荷）。只要通電，電容就會慢慢漏電！所以必須每隔幾毫秒就「幫它充電一次（Refresh）」，否則裡面的 0 和 1 會全部消失。優點是便宜、容量超大（8GB、16GB），所以拿來當我們日常的主記憶體！</p>
+            <p class="text-xs bg-indigo-50 p-2.5 rounded-xl border border-indigo-200 text-indigo-900 font-medium">
+              💡 <strong>秒殺記憶口訣：</strong>S 代表 Speed(快取SRAM)，D 代表 Discount(便宜大容量DRAM需Refresh)！
+            </p>
+          `;
+        } else if (lower.includes('2.8') || lower.includes('ghz') || lower.includes('頻率') || lower.includes('十億')) {
+          reply = `
+            <p class="font-bold text-indigo-700">冠宇，你第 15 題被單位的「億」給騙了！我們把這套單位階梯刻在大腦裡：</p>
+            <p>電腦的頻率單位是 Hertz (Hz，每秒次數)：</p>
+            <ul class="list-disc pl-5 space-y-1 text-slate-700">
+              <li>$1\text{ KHz} = 10^3\text{ Hz} = 1,000\text{ 次/秒}$（千）</li>
+              <li>$1\text{ MHz} = 10^6\text{ Hz} = 1,000,000\text{ 次/秒}$（百萬）</li>
+              <li><strong class="text-rose-600">$1\text{ GHz} = 10^9\text{ Hz} = 1,000,000,000\text{ 次/秒}$（十億！）</strong></li>
+            </ul>
+            <p>所以：<strong>2.80 GHz = 2.80 × 10 億 = 28 億次/秒！</strong><br>考卷選項 (D) 故意寫「2.80 億次」，硬生生少了一個 0！真正的正解就是 (C) CPU的時脈頻率為 2.80GHz。</p>
+          `;
+        } else if (lower.includes('64位元') || lower.includes('8gb') || lower.includes('暫存器')) {
+          reply = `
+            <p class="font-bold text-indigo-700">第 12 題這題觀念非常重要，很多人會選 (A)，老師幫你拆解：</p>
+            <p>• <strong>8GB 指的是什麼？</strong> 是「主記憶體 (RAM)」的容量！如果是快取記憶體(Cache)，通常只有 8MB~32MB，不可能大到 8GB 這麼誇張。</p>
+            <p>• <strong>64 位元指的是什麼？</strong> 是 CPU 內部的「<strong>一般用途暫存器（Register）</strong>」的大小，以及內部資料匯流排寬度！這代表 CPU 一口氣可以吞吐運算 64 個 0 與 1，決定了運算精度與定址能力。</p>
+            <p class="text-xs bg-emerald-50 p-2.5 rounded-xl border border-emerald-200 text-emerald-900 font-medium">
+              💡 <strong>口訣：</strong>「幾位元」看暫存器，「幾GB」看主記憶體！
+            </p>
+          `;
+        } else if (lower.includes('cpu') || lower.includes('單元') || lower.includes('alu') || lower.includes('cu')) {
+          reply = `
+            <p class="font-bold text-indigo-700">電腦五大單元裡，常常有人把 CPU 搞混，老師教你畫一張圖：</p>
+            <p>電腦五大單元分別是：<strong>輸入 (IU)、輸出 (OU)、控制 (CU)、算術邏輯 (ALU)、記憶 (MU)</strong>。</p>
+            <p>而真正的核心 <strong>CPU（中央處理單元）</strong> 只有兩個人合體：<br>
+            👉 <strong>ALU (算術邏輯單元):</strong> 負責所有加減乘除與邏輯比較比對（動腦算數）。<br>
+            👉 <strong>CU (控制單元):</strong> 負責指揮調度、解碼指令、命令各單元做事（發號施令的大腦）。</p>
+            <p>至於記憶單元(MU)，是獨立在旁邊存放程式的倉庫，<strong>不屬於 CPU 的雙核心定義</strong>喔！</p>
+          `;
+        } else {
+          reply = `
+            <p class="font-bold text-indigo-700">收到你的問題！關於「${question}」：</p>
+            <p>在資電科的計算機硬體架構中，最核心的思考主軸就是<strong>「誰負責算、誰負責存、誰負責傳」</strong>。</p>
+            <ul class="list-disc pl-5 space-y-1 text-slate-700">
+              <li>負責算：<strong>ALU (算術邏輯單元)</strong></li>
+              <li>負責指揮：<strong>CU (控制單元)</strong></li>
+              <li>負責存：<strong>Cache (SRAM)、主記憶體 (DRAM)、硬碟 (SSD/HDD)</strong></li>
+              <li>負責傳與插拔：<strong>匯流排與各類 I/O 連接埠 (Type-C, HDMI, 熱插拔)</strong></li>
+            </ul>
+            <p>你可以試著點擊左側「弱點變形練習測驗」，實戰做做看題目，遇到卡住的選項隨時在這邊問老師喔！</p>
+          `;
+        }
+
+        addChatMessage('ai', reply);
+      }, 700);
+    }
+
+    function clearChat() {
+      const messagesContainer = document.getElementById('chat-messages');
+      messagesContainer.innerHTML = `
+        <div class="flex items-start space-x-3 max-w-2xl">
+          <div class="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center font-bold text-xs shrink-0 shadow-sm">
+            AI
+          </div>
+          <div class="bg-white p-4 rounded-2xl rounded-tl-sm border border-slate-200 shadow-sm text-sm text-slate-800 leading-relaxed space-y-2">
+            <p class="font-bold text-indigo-700">對話紀錄已重置！冠宇同學，有任何不懂的硬體概念隨時問我喔 👨‍🏫</p>
+          </div>
+        </div>
+      `;
+    }
+  </script>
+</body>
+</html>
+
